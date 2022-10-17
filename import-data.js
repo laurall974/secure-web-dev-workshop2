@@ -11,7 +11,7 @@ mongoose.connect(process.env.MONGO_URI).then(() => {console.log('Connected!')
     deleteLocationById('32'); //test : ne marche pas ok
     deleteLocationById('633f19972cd2549596ba3922'); // ok !!
     //addLocation('Horror','Laura MONGO','2018','Laura le retour','75020','2019-456','Roch Moreau','ESILV','2018-11-23');
-
+    updateLocation('634d83c853fde20788d76a3d', 'filmName','Laura is back')
 })
 
 // .connect() est asynchrone
@@ -115,6 +115,11 @@ function addLocation(filmType, filmProducerName,endDate,filmName, district, sour
  * Write a function to update a Location
  */
 
-function updateLocation(){
+async function updateLocation(id, option, newValue){
+    const loc = await Location.findById(id)
+    loc[option] = newValue;
+    await loc.save();
 
 }
+
+/** FINISH */
