@@ -8,10 +8,14 @@ const { Schema } = mongoose;
 // on connecte a la bdd mongodb on recupere les credentials dans notre fichier .env
 mongoose.connect(process.env.MONGO_URI).then(() => {console.log('Connected!')
     getFilmingLocationById('2019-1611');
-    deleteLocationById('32'); //test : ne marche pas ok
-    deleteLocationById('633f19972cd2549596ba3922'); // ok !!
+    getFilmingLocationByFilmName('French Exit');
+    //deleteLocationById('32'); //test : ne marche pas ok
+    //deleteLocationById('633f19972cd2549596ba3922'); // ok !!
     //addLocation('Horror','Laura MONGO','2018','Laura le retour','75020','2019-456','Roch Moreau','ESILV','2018-11-23');
-    updateLocation('634d83c853fde20788d76a3d', 'filmName','Laura is back')
+    //updateLocation('634d83c853fde20788d76a3d', 'filmName','Laura is back')
+    updateManyLocation('Australian exit','Exit');
+    getFilmingLocationByFilmName('Exit');
+
 })
 
 // .connect() est asynchrone
@@ -83,9 +87,9 @@ async function getFilmingLocationById(id){
 /**Question 10 :
  * Write a function to query all Locations for a given filmName
  */
-function getFilmingLocationByFilmName (filmName){
-    const query =  Location.findOne({'filmName':filmName});
-    return query;
+async function getFilmingLocationByFilmName (filmName){
+    const query =  await Location.find({'filmName':filmName});
+    console.log(query);
 }
 
 /**Question 11 :
@@ -116,10 +120,28 @@ function addLocation(filmType, filmProducerName,endDate,filmName, district, sour
  */
 
 async function updateLocation(id, option, newValue){
-    const loc = await Location.findById(id)
-    loc[option] = newValue;
-    await loc.save();
+    try {
+        const loc = await Location.findById(id)
+        loc[option] = newValue;
+        await loc.save();
+        console.log('Updated')
+    }
+    catch (error){
+        console.error(error)
+    }
 
+}
+
+async function updateManyLocation( oldValue, newValue){
+    try {
+        const res = await Location.updateMany({ filmName: oldValue }, {filmName: newValue});
+        console.log('Updated')
+        console.log('matched count : ' + res.matchedCount)
+        console.log('modified count : ' + res.modifiedCount)
+    }
+    catch (error){
+        console.error(error)
+    }
 }
 
 /** FINISH */
